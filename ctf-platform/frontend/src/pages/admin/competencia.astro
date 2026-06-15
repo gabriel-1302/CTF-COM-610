@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AuthGuard from "../../components/astro/AuthGuard.astro";
+import CompetitionManager from "../../components/react/CompetitionManager";
+---
+<BaseLayout title="Gestión de Competencia" description="Panel de control en tiempo real para la competencia CTF USFX.">
+  <AuthGuard adminOnly />
+  <div class="mb-6">
+    <div class="flex items-center gap-3 mb-1">
+      <a href="/admin" class="text-sm" style="color: var(--text-muted);">← Panel Admin</a>
+    </div>
+    <h1 class="page-title">Gestión de Competencia</h1>
+    <p class="page-subtitle">Control en tiempo real · Singleton <code>CompetitionConfig</code></p>
+  </div>
+  <CompetitionManager client:load />
+</BaseLayout>

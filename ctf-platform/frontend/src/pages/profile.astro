@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthGuard from "../components/astro/AuthGuard.astro";
+import UserProfile from "../components/react/UserProfile";
+---
+<BaseLayout title="Mi Perfil">
+  <AuthGuard />
+  <UserProfile client:load />
+</BaseLayout>

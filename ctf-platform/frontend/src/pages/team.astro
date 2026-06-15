@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthGuard from "../components/astro/AuthGuard.astro";
+import TeamPanel from "../components/react/TeamPanel";
+---
+<BaseLayout
+  title="Mi Equipo"
+  description="Crea o únete a un equipo para competir en la CTF USFX."
+>
+  <AuthGuard />
+  <div class="page-header">
+    <h1 class="page-title">Equipo</h1>
+    <p class="page-subtitle">
+      Crea un equipo o únete con el código de invitación de tu capitán.
+    </p>
+  </div>
+  <TeamPanel client:load />
+</BaseLayout>

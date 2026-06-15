@@ -1,0 +1,121 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthForm from "../components/react/AuthForm";
+---
+<BaseLayout title="Iniciar sesión" description="Accede a la plataforma CTF USFX." fullWidth={true}>
+  <div class="min-h-[calc(100vh-8rem)] flex flex-col md:flex-row">
+
+    <!-- Panel izquierdo: temático CTF -->
+    <div
+      class="relative flex flex-col justify-between overflow-hidden px-10 py-12 md:w-[45%] shrink-0"
+      style="background: radial-gradient(ellipse at 65% 40%, #5d3ecf 0%, #3d2c88 50%, #1a0f40 100%);"
+    >
+      <!-- Grid pattern sutil -->
+      <div
+        aria-hidden="true"
+        class="absolute inset-0 pointer-events-none"
+        style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 36px 36px;"
+      ></div>
+
+      <!-- Texto decorativo flotante -->
+      <div
+        aria-hidden="true"
+        class="absolute right-6 top-1/2 -translate-y-1/2 font-mono text-[11px] leading-loose opacity-[0.07] text-white select-none pointer-events-none text-right hidden lg:block"
+      >
+        <div>$ nmap -sV --script vuln</div>
+        <div>PORT   STATE SERVICE</div>
+        <div>80/tcp open  http</div>
+        <div>$ sqlmap -u "http://..." --dump</div>
+        <div>$ john --wordlist=rockyou.txt</div>
+        <div>$ python3 exploit.py</div>
+        <div style="color: #FFEE58;">$ cat flag.txt</div>
+      </div>
+
+      <!-- Logo + título -->
+      <div class="relative z-10">
+        <a href="/" class="inline-flex items-center gap-3 group" aria-label="CTF USFX — Inicio">
+          <span
+            class="inline-flex items-center justify-center p-2.5 rounded-xl transition-colors duration-150"
+            style="background: rgba(255,255,255,0.12);"
+          >
+            <img src="/logo-usfx.png" alt="USFX" class="h-7 w-auto" />
+          </span>
+          <div class="leading-tight">
+            <p class="font-bold text-white text-lg tracking-tight">CTF USFX</p>
+            <p class="text-[11px] font-medium tracking-wide uppercase" style="color: rgba(255,255,255,0.45);">Plataforma de competencia</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Tagline central -->
+      <div class="relative z-10 hidden md:block">
+        <div class="font-mono text-xs mb-4" style="color: rgba(255,238,88,0.8);">
+          <span class="opacity-60">$</span> ssh ctf.usfx.bo
+        </div>
+        <h2 class="text-3xl font-bold text-white leading-tight tracking-tight mb-3">
+          Desafíos reales.<br/>Entornos aislados.
+        </h2>
+        <p class="text-sm leading-relaxed max-w-xs" style="color: rgba(255,255,255,0.55);">
+          Explota vulnerabilidades reales diseñadas por la DTIC. Cada reto corre en su propio contenedor efímero.
+        </p>
+
+        <!-- Categorías como badges -->
+        <div class="flex flex-wrap gap-2 mt-6">
+          {[
+            { label: "SQL Injection", color: "#fde68a", text: "#92400e" },
+            { label: "XSS",          color: "#c4b5fd", text: "#3730a3" },
+            { label: "SSTI",         color: "#a5f3fc", text: "#155e75" },
+            { label: "RSA",          color: "#fecdd3", text: "#9f1239" },
+            { label: "JWT",          color: "#bfdbfe", text: "#1e40af" },
+            { label: "CMDi",         color: "#fca5a5", text: "#991b1b" },
+          ].map(({ label, color, text }) => (
+            <span
+              class="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+              style={`background: ${color}22; color: ${color}; border: 1px solid ${color}44;`}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Footer del panel -->
+      <div class="relative z-10 hidden md:block">
+        <p class="text-[11px]" style="color: rgba(255,255,255,0.25);">
+          Universidad Mayor Real y Pontificia<br/>de San Francisco Xavier de Chuquisaca
+        </p>
+      </div>
+    </div>
+
+    <!-- Panel derecho: formulario -->
+    <div class="flex-1 flex items-center justify-center px-6 py-12" style="background: var(--bg);">
+      <div class="w-full max-w-sm animate-fade-in">
+
+        <!-- Header del formulario -->
+        <div class="mb-8">
+          <div
+            class="inline-flex items-center gap-1.5 text-xs font-mono font-semibold px-3 py-1.5 rounded-full mb-5"
+            style="background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border);"
+          >
+            <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--primary);"></span>
+            Sistema activo
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight" style="color: var(--text);">Bienvenido de vuelta</h1>
+          <p class="text-sm mt-1.5" style="color: var(--text-muted);">Ingresa tus credenciales para acceder a los retos</p>
+        </div>
+
+        <!-- Card del formulario -->
+        <div class="card" style="border-color: var(--border);">
+          <AuthForm mode="login" client:load />
+        </div>
+
+        <!-- Link a challenges para curiosos -->
+        <p class="text-center text-xs mt-6" style="color: var(--text-faint);">
+          ¿Solo quieres explorar?{" "}
+          <a href="/challenges" class="font-semibold" style="color: var(--primary);">Ver retos disponibles →</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

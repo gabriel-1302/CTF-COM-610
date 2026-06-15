@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AuthGuard from "../../components/astro/AuthGuard.astro";
+import ChallengeDetail from "../../components/react/ChallengeDetail";
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: "sqli" } },
+    { params: { slug: "xss" } },
+    { params: { slug: "ssti" } },
+    { params: { slug: "crypto-rsa" } },
+    { params: { slug: "crypto-vigenere" } },
+    { params: { slug: "cmdi" } },
+    { params: { slug: "path-traversal" } },
+    { params: { slug: "jwt" } },
+    { params: { slug: "lfi" } },
+    { params: { slug: "idor" } },
+    { params: { slug: "xxe" } },
+    { params: { slug: "format-string" } },
+    { params: { slug: "forensics-pcap" } },
+    { params: { slug: "stego" } },
+  ];
+}
+
+const { slug } = Astro.params;
+
+const slugTitles: Record<string, string> = {
+  sqli: "Inyección SQL",
+  xss: "XSS Almacenado",
+  ssti: "Inyección de Plantillas",
+  "crypto-rsa": "Claves Rotas — RSA",
+  "crypto-vigenere": "El Cifrado Perfecto",
+  cmdi: "El Diagnóstico de Red",
+  "path-traversal": "La Biblioteca Abierta",
+  jwt: "El Portal del Administrador",
+  lfi: "La Puerta Entreabierta",
+  idor: "Todos los Perfiles",
+  xxe: "Entidades Peligrosas",
+  "format-string": "El Logger Indiscreto",
+  "forensics-pcap": "El Tráfico Comprometido",
+  stego: "La Imagen Silenciosa",
+};
+
+type CatInfo = { label: string; color: string; bg: string; border: string };
+const webSlugs = ["sqli","cmdi","xss","lfi","path-traversal","ssti","idor","format-string","jwt","xxe"];
+const cryptoSlugs = ["crypto-rsa","crypto-vigenere"];
+const forensicsSlugs = ["forensics-pcap","stego"];
+
+function getCategory(s: string): CatInfo {
+  if (webSlugs.includes(s))      return { label: "Web",     color: "#818cf8", bg: "rgba(129,140,248,0.18)", border: "rgba(129,140,248,0.35)" };
+  if (cryptoSlugs.includes(s))   return { label: "Crypto",  color: "#f472b6", bg: "rgba(244,114,182,0.18)", border: "rgba(244,114,182,0.35)" };
+  if (forensicsSlugs.includes(s))return { label: "Forense", color: "#34d399", bg: "rgba(52,211,153,0.18)",  border: "rgba(52,211,153,0.35)"  };
+  return { label: "Misc", color: "#94a3b8", bg: "rgba(148,163,184,0.18)", border: "rgba(148,163,184,0.35)" };
+}
+
+const title = slugTitles[slug!] ?? slug!;
+const cat = getCategory(slug!);
+---
+<BaseLayout
+  title={`${title} · Reto CTF`}
+  description={`Resuelve el reto "${title}" en la plataforma CTF USFX.`}
+  fullWidth={true}
+>
+  <AuthGuard />
+
+  <!-- Hero header -->
+  <div class="relative overflow-hidden text-white" style="background: radial-gradient(ellipse at 65% 45%, #5d3ecf 0%, #3d2c88 50%, #1a0f40 100%);">
+    <!-- Grid overlay -->
+    <div aria-hidden="true" class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 36px 36px;"></div>
+
+    <!-- Decorative terminal (desktop) -->
+    <div aria-hidden="true" class="absolute right-8 inset-y-0 flex-col justify-center gap-1.5 font-mono text-[11px] opacity-[0.07] select-none pointer-events-none text-right hidden lg:flex" style="color: white;">
+      <div>$ nmap -sV target</div>
+      <div>$ sqlmap -u "url"</div>
+      <div>$ curl -X POST /api</div>
+      <div>$ nc ctf.usfx.bo 9000</div>
+      <div style="color: #FFEE58;">$ cat flag.txt</div>
+    </div>
+
+    <div class="container-page relative py-10 sm:py-12">
+      <a
+        href="/challenges"
+        class="inline-flex items-center gap-1.5 text-xs font-mono mb-5 transition-opacity hover:opacity-100"
+        style="color: rgba(255,255,255,0.45);"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        /challenges
+      </a>
+
+      <div class="flex items-center gap-2.5 mb-3">
+        <span
+          class="text-xs font-bold px-2.5 py-1 rounded-full"
+          style={`background: ${cat.bg}; color: ${cat.color}; border: 1px solid ${cat.border};`}
+        >
+          {cat.label}
+        </span>
+        <span class="font-mono text-xs" style="color: rgba(255,238,88,0.55);">$ nc ctf.usfx.bo &lt;port&gt;</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
+      <p class="text-sm mt-1.5" style="color: rgba(255,255,255,0.45);">Resuelve el entorno, captura la flag y súmala al marcador.</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="container-page py-8">
+    <ChallengeDetail slug={slug!} client:load />
+  </div>
+</BaseLayout>

@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AuthGuard from "../../components/astro/AuthGuard.astro";
+import SolucionarioView from "../../components/react/SolucionarioView";
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: "sqli" } },
+    { params: { slug: "xss" } },
+    { params: { slug: "ssti" } },
+    { params: { slug: "crypto-rsa" } },
+    { params: { slug: "crypto-vigenere" } },
+    { params: { slug: "cmdi" } },
+    { params: { slug: "path-traversal" } },
+    { params: { slug: "jwt" } },
+    { params: { slug: "lfi" } },
+    { params: { slug: "idor" } },
+    { params: { slug: "xxe" } },
+    { params: { slug: "format-string" } },
+    { params: { slug: "forensics-pcap" } },
+    { params: { slug: "stego" } },
+  ];
+}
+
+const { slug } = Astro.params;
+---
+<BaseLayout title={`Solucionario — ${slug}`}>
+  <AuthGuard />
+  <SolucionarioView slug={slug!} client:load />
+</BaseLayout>

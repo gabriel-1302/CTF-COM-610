@@ -1,0 +1,100 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Solucionario — {{ challenge.name }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Inicio</a>
+  &rsaquo; <a href="{% url 'admin:challenges_challenge_changelist' %}">Retos</a>
+  &rsaquo; <a href="{% url 'admin:challenges_challenge_change' challenge.pk %}">{{ challenge.name }}</a>
+  &rsaquo; Solucionario
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+  .solucionario-body {
+    background: #fff;
+    padding: 24px 32px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-width: 900px;
+    font-family: Georgia, serif;
+    line-height: 1.7;
+    color: #222;
+  }
+  .solucionario-body h1, .solucionario-body h2, .solucionario-body h3 {
+    font-family: sans-serif;
+    color: #417690;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 4px;
+  }
+  .solucionario-body code {
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: monospace;
+  }
+  .solucionario-body pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  .solucionario-body pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+  .solucionario-body blockquote {
+    border-left: 4px solid #417690;
+    margin: 0;
+    padding: 8px 16px;
+    background: #f0f6fa;
+    color: #555;
+  }
+  .solucionario-body table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .solucionario-body th, .solucionario-body td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .solucionario-body th {
+    background: #417690;
+    color: #fff;
+  }
+  .no-solucionario {
+    color: #888;
+    font-style: italic;
+    padding: 24px;
+    background: #fafafa;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+  }
+</style>
+
+<h1>📖 Solucionario: {{ challenge.name }}</h1>
+<p style="color:#666; margin-bottom:16px;">
+  <strong>Slug:</strong> {{ challenge.slug }} &nbsp;|&nbsp;
+  <strong>Puntos:</strong> {{ challenge.points }} &nbsp;|&nbsp;
+  <a href="{% url 'admin:challenges_challenge_change' challenge.pk %}">&larr; Volver al reto</a>
+</p>
+
+{% if html_content %}
+  <div class="solucionario-body">
+    {{ html_content }}
+  </div>
+{% else %}
+  <div class="no-solucionario">
+    No se encontró solucionario para el reto <strong>{{ challenge.slug }}</strong>.<br>
+    Se buscó: <code>soluciones/*_{{ challenge.slug }}.md</code>
+  </div>
+{% endif %}
+{% endblock %}

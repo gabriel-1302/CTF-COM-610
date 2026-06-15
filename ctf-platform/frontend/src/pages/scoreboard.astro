@@ -1,0 +1,92 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Scoreboard from "../components/react/Scoreboard";
+import TeamScoreboard from "../components/react/TeamScoreboard";
+---
+<BaseLayout title="Clasificación" description="Clasificación global de la competencia CTF USFX." fullWidth={true}>
+
+  <!-- Hero header -->
+  <div class="relative overflow-hidden text-white" style="background: radial-gradient(ellipse at 60% 50%, #5d3ecf 0%, #3d2c88 50%, #1a0f40 100%);">
+    <div aria-hidden="true" class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 36px 36px;"></div>
+    <!-- Decorativo flotante -->
+    <div aria-hidden="true" class="absolute right-8 inset-y-0 flex flex-col justify-center gap-1 font-mono text-[11px] opacity-[0.07] select-none pointer-events-none text-right hidden lg:flex" style="color: white;">
+      <div>01 ──────────── 2850 pt</div>
+      <div>02 ──────────── 2400 pt</div>
+      <div>03 ──────────── 1900 pt</div>
+      <div>04 ──────────── 1500 pt</div>
+      <div style="color:#FFEE58;">05 ──────────── 1200 pt</div>
+    </div>
+    <div class="container-page relative py-10 sm:py-12">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="font-mono text-xs mb-2.5" style="color: rgba(255,238,88,0.8);">$ cat scoreboard.json | sort -k2 -rn</div>
+          <h1 class="text-3xl font-bold tracking-tight">Clasificación</h1>
+          <p class="text-sm mt-1" style="color: rgba(255,255,255,0.55);">Ranking en tiempo real · Actualización automática cada 30 s</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full" style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.12);">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          En vivo
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="container-page py-8">
+
+    <!-- Tabs -->
+    <div id="sb-tabs" class="mb-6">
+      <div class="flex gap-1 p-1 rounded-lg w-fit" style="background: var(--surface-alt); border: 1px solid var(--border);">
+        <button id="tab-individual" class="tab-btn active-tab text-sm font-semibold px-4 py-2 rounded-md transition-all">
+          Individual
+        </button>
+        <button id="tab-teams" class="tab-btn text-sm font-semibold px-4 py-2 rounded-md transition-all" style="color: var(--text-muted);">
+          Equipos
+        </button>
+      </div>
+    </div>
+
+    <div id="panel-individual"><Scoreboard client:load /></div>
+    <div id="panel-teams" style="display: none;"><TeamScoreboard client:load /></div>
+  </div>
+
+</BaseLayout>
+
+<style>
+  .active-tab {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+</style>
+
+<script>
+  const indPanel   = document.getElementById("panel-individual")!;
+  const teamsPanel = document.getElementById("panel-teams")!;
+  const indBtn     = document.getElementById("tab-individual")!;
+  const teamsBtn   = document.getElementById("tab-teams")!;
+
+  function switchTab(tab: "individual" | "teams") {
+    if (tab === "individual") {
+      indPanel.style.display = "";
+      teamsPanel.style.display = "none";
+      indBtn.classList.add("active-tab");
+      indBtn.style.color = "";
+      teamsBtn.classList.remove("active-tab");
+      teamsBtn.style.color = "var(--text-muted)";
+    } else {
+      indPanel.style.display = "none";
+      teamsPanel.style.display = "";
+      teamsBtn.classList.add("active-tab");
+      teamsBtn.style.color = "";
+      indBtn.classList.remove("active-tab");
+      indBtn.style.color = "var(--text-muted)";
+    }
+  }
+
+  indBtn.addEventListener("click", () => switchTab("individual"));
+  teamsBtn.addEventListener("click", () => switchTab("teams"));
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("tab") === "teams") switchTab("teams");
+</script>

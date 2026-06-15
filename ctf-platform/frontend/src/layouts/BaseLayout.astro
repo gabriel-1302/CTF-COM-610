@@ -1,0 +1,49 @@
+---
+import Navbar from "../components/astro/Navbar.astro";
+import ToastContainer from "../components/react/ToastContainer";
+import "../styles/globals.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  fullWidth?: boolean;
+}
+const {
+  title,
+  description = "Plataforma CTF institucional de la USFX — entornos aislados por usuario.",
+  fullWidth = false,
+} = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title} · CTF USFX</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen flex flex-col" style="background-color: var(--bg); color: var(--text);">
+    <Navbar />
+    <main id="main-content" class:list={["flex-1", !fullWidth && "container-page py-10"]}>
+      <slot />
+    </main>
+    <footer class="border-t mt-16 py-6" style="border-color: var(--border);">
+      <div class="container-page flex flex-col sm:flex-row justify-between items-center gap-2 text-xs" style="color: var(--text-faint);">
+        <span>CTF · Universidad Mayor Real y Pontificia de San Francisco Xavier de Chuquisaca</span>
+        <span class="font-mono">DTIC · USFX &nbsp;·&nbsp; v0.7.0</span>
+      </div>
+    </footer>
+    <ToastContainer client:load />
+    <script>
+      const observer = new IntersectionObserver(
+        entries => entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        }),
+        { threshold: 0.12 }
+      );
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+  </body>
+</html>

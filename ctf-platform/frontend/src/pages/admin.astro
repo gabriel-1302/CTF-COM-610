@@ -1,0 +1,9 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthGuard from "../components/astro/AuthGuard.astro";
+import AdminDashboard from "../components/react/AdminDashboard";
+---
+<BaseLayout title="Panel de Administración">
+  <AuthGuard />
+  <AdminDashboard client:load />
+</BaseLayout>

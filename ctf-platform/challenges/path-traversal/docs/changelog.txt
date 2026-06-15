@@ -1,0 +1,21 @@
+Registro de Cambios — DocPortal
+================================
+
+v2.3.0 (2025-11-10)
+  - Mejora de rendimiento en la carga de documentos grandes
+  - Corrección de errores en la paginación
+
+v2.2.0 (2025-08-22)
+  - Nuevo diseño de interfaz
+  - Soporte para archivos .md
+
+v2.1.0 (2025-05-03)
+  - Implementación del sistema de logs de acceso
+  - Autenticación LDAP integrada
+
+v2.0.0 (2025-01-15)
+  - Reescritura completa del backend en Python/Flask
+  - Migración desde sistema legacy PHP
+
+v1.0.0 (2024-06-01)
+  - Lanzamiento inicial

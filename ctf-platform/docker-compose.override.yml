@@ -1,0 +1,56 @@
+# docker-compose.override.yml — Overrides para desarrollo local
+# Se aplica automáticamente sobre docker-compose.yml cuando NO usas -f explícito.
+#
+# Diferencias vs producción:
+#   - backend:  runserver en lugar de gunicorn (auto-reload)
+#   - frontend: dev server de Astro con hot-reload (servicio solo en dev)
+#   - Sin nginx (Astro dev proxea /api → localhost:8000 via vite)
+#   - Puertos expuestos directamente para desarrollo
+
+name: ctf-platform
+
+services:
+
+  backend:
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      DOCKER_HOST: ""
+      DOCKER_TLS_VERIFY: ""
+      DOCKER_CERT_PATH: ""
+    volumes:
+      - ./backend:/app
+      - ./soluciones:/soluciones:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"   # acceso directo en dev
+
+  # Astro dev server con hot-reload — solo existe en desarrollo
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: build
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4321:4321"
+    networks:
+      - internal
+
+  # nginx no corre en dev; Astro dev proxea /api → backend:8000 via vite
+  nginx:
+    profiles: ["production"]
+
+  celery:
+    command: >
+      sh -c "celery -A config worker --beat --loglevel=debug --concurrency=2"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      DOCKER_HOST: ""
+      DOCKER_TLS_VERIFY: ""
+      DOCKER_CERT_PATH: ""
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

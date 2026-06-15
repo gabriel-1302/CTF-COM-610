@@ -1,0 +1,39 @@
+---
+interface Props {
+  adminOnly?: boolean;
+}
+const { adminOnly = false } = Astro.props;
+---
+<script define:vars={{ adminOnly }}>
+  import { accessToken, isAdmin } from "../../lib/auth";
+  import { api } from "../../lib/api";
+
+  async function ensureAuth() {
+    if (accessToken.get()) {
+      if (adminOnly && !isAdmin.get()) {
+        location.href = "/";
+      }
+      return;
+    }
+    try {
+      await api.get("/auth/me/");
+      if (accessToken.get()) {
+        if (adminOnly && !isAdmin.get()) {
+          location.href = "/";
+        }
+        return;
+      }
+    } catch {}
+
+    await new Promise((r) => setTimeout(r, 300));
+    if (!accessToken.get()) {
+      location.href = "/login";
+      return;
+    }
+    if (adminOnly && !isAdmin.get()) {
+      location.href = "/";
+    }
+  }
+
+  ensureAuth();
+</script>

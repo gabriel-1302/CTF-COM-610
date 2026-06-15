@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AuthGuard from "../components/astro/AuthGuard.astro";
+import CompetitionView from "../components/react/CompetitionView";
+---
+<BaseLayout title="Competencia" description="Retos oficiales de la competencia CTF USFX.">
+  <AuthGuard />
+  <div class="page-header">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h1 class="page-title">Competencia</h1>
+        <p class="page-subtitle">Retos oficiales. Solo cuentan los puntos de equipo.</p>
+      </div>
+      <a href="/challenges" class="btn-ghost text-sm">← Entrenamiento</a>
+    </div>
+  </div>
+  <CompetitionView client:load />
+</BaseLayout>

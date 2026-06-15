@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {% if original %}
+    <li>
+      <a href="solucionario/" class="viewsitelink" style="background:#417690">
+        📖 Solucionario
+      </a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

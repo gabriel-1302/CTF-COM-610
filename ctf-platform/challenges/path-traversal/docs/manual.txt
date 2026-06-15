@@ -1,0 +1,21 @@
+Manual de Usuario — DocPortal v2.3
+===================================
+
+1. ACCESO AL SISTEMA
+   Navega a http://docportal.infracorp.internal y selecciona el documento deseado.
+
+2. VISUALIZACIÓN DE DOCUMENTOS
+   Los documentos se cargan mediante el parámetro ?file= en la URL.
+   Ejemplo: /view?file=readme.txt
+
+3. FORMATOS SOPORTADOS
+   - Texto plano (.txt)
+   - Markdown (.md)
+   - Logs del sistema (.log)
+
+4. RESTRICCIONES
+   Solo se permite acceder a documentos dentro del directorio autorizado.
+   Cualquier intento de acceso fuera del directorio será registrado.
+
+5. CONTACTO
+   it-support@infracorp.internal | Ext. 2048

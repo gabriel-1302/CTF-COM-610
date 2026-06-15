@@ -1,0 +1,128 @@
+name: ctf-platform
+
+services:
+
+  # ── Base de datos ───────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:        ${POSTGRES_DB:-ctf_db}
+      POSTGRES_USER:      ${POSTGRES_USER:-ctf_user}
+      POSTGRES_PASSWORD:  ${POSTGRES_PASSWORD:-ctfpassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ctf_user} -d ${POSTGRES_DB:-ctf_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Cache / Broker Celery ───────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ── Backend Django + Gunicorn ──────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      POSTGRES_HOST:          db
+      REDIS_URL:              redis://redis:6379/0
+      DOCKER_HOST:            ${DOCKER_HOST:-}
+      DOCKER_TLS_VERIFY:      ${DOCKER_TLS_VERIFY:-}
+      DOCKER_CERT_PATH:       ${DOCKER_CERT_PATH:-}
+      ALLOWED_HOSTS:          ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      CORS_ORIGINS:           ${CORS_ORIGINS:-http://localhost}
+      ADMIN_USERNAME:         ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD:         ${ADMIN_PASSWORD:-admin}
+      ADMIN_EMAIL:            ${ADMIN_EMAIL:-admin@ctf.local}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./soluciones:/soluciones:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8000/api/auth/scoreboard/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Celery worker + beat ────────────────────────────────────────────────────
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: >
+      sh -c "celery -A config worker --beat --loglevel=info --concurrency=2"
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      POSTGRES_HOST:          db
+      REDIS_URL:              redis://redis:6379/0
+      DOCKER_HOST:            ${DOCKER_HOST:-}
+      DOCKER_TLS_VERIFY:      ${DOCKER_TLS_VERIFY:-}
+      DOCKER_CERT_PATH:       ${DOCKER_CERT_PATH:-}
+      SKIP_INIT:              "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  # ── Nginx: reverse proxy + estáticos Astro ──────
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - internal
+
+# ── Volúmenes Globales ─────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+
+# ── Redes ──────────────────────────────────────────────────────────────────────
+networks:
+  internal:

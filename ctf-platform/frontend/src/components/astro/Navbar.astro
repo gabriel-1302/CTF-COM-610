@@ -1,0 +1,80 @@
+---
+import NavbarAuth from "../react/NavbarAuth";
+
+const path = Astro.url.pathname;
+
+function navCls(href: string) {
+  const active = path.startsWith(href);
+  return `text-sm font-medium px-3 py-1.5 rounded-md nav-link${active ? " nav-link--active" : ""}`;
+}
+---
+
+<script>
+  const header = document.querySelector('header') as HTMLElement | null;
+  if (header) {
+    const toggle = () => header.classList.toggle('nav-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', toggle, { passive: true });
+    toggle();
+  }
+</script>
+
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-md focus:text-sm focus:font-semibold focus:shadow-lg"
+  style="background: var(--primary); color: #fff;"
+>
+  Saltar al contenido
+</a>
+
+<header class="sticky top-0 z-50" style="background: var(--surface); border-bottom: 1px solid var(--border);">
+  <!-- Franja tricolor institucional USFX -->
+  <div class="flex h-[4px]" aria-hidden="true">
+    <div class="flex-1" style="background: var(--usfx-blue);"></div>
+    <div class="flex-1" style="background: #503AA8;"></div>
+    <div class="flex-1" style="background: var(--usfx-red);"></div>
+  </div>
+
+  <nav class="container-page flex justify-between items-center h-16" aria-label="Navegación principal">
+    <!-- Logo -->
+    <a
+      href="/"
+      class="flex items-center gap-3 shrink-0"
+      aria-label="CTF USFX — Inicio"
+    >
+      <span
+        class="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg"
+        style="background: #503AA8;"
+      >
+        <img src="/logo-usfx.png" alt="USFX" class="h-5 w-auto" />
+      </span>
+      <div class="flex flex-col leading-none">
+        <span class="font-bold text-sm tracking-tight" style="color: var(--text);">CTF USFX</span>
+        <span class="text-[10px] font-medium tracking-wide uppercase" style="color: var(--text-faint);">Competencia</span>
+      </div>
+    </a>
+
+    <!-- Nav central + auth -->
+    <div class="flex items-center gap-0.5 sm:gap-1">
+      <a
+        href="/challenges"
+        class={navCls("/challenges")}
+        aria-current={path.startsWith("/challenges") ? "page" : undefined}
+      >
+        Retos
+      </a>
+      <a
+        href="/scoreboard"
+        class={navCls("/scoreboard")}
+        aria-current={path.startsWith("/scoreboard") ? "page" : undefined}
+      >
+        Clasificación
+      </a>
+
+      <!-- Separador -->
+      <div class="w-px h-4 mx-2 sm:mx-3" style="background: var(--border);" aria-hidden="true"></div>
+
+      <!-- Auth dinámico (React, hydrated en cliente) -->
+      <NavbarAuth client:load currentPath={path} />
+    </div>
+  </nav>
+</header>

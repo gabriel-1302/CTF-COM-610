@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AuthGuard from "../../components/astro/AuthGuard.astro";
+import ChallengeList from "../../components/react/ChallengeList";
+import CompetitionEntryBanner from "../../components/react/CompetitionEntryBanner";
+import TeamEnrollBanner from "../../components/react/TeamEnrollBanner";
+---
+<BaseLayout title="Retos" description="Retos de ciberseguridad disponibles en la plataforma CTF USFX." fullWidth={true}>
+  <AuthGuard />
+
+  <!-- Hero header -->
+  <div class="relative overflow-hidden text-white" style="background: radial-gradient(ellipse at 60% 50%, #5d3ecf 0%, #3d2c88 50%, #1a0f40 100%);">
+    <div aria-hidden="true" class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 36px 36px;"></div>
+    <!-- Decorativo flotante -->
+    <div aria-hidden="true" class="absolute right-8 inset-y-0 flex-col justify-center gap-1.5 font-mono text-[11px] opacity-[0.07] select-none pointer-events-none text-right hidden lg:flex" style="color: white;">
+      <div>drwxr-xr-x  web/</div>
+      <div>drwxr-xr-x  crypto/</div>
+      <div>drwxr-xr-x  forense/</div>
+      <div>-rw-r--r--  sqli.docker</div>
+      <div>-rw-r--r--  xss.docker</div>
+      <div style="color: #FFEE58;">-rw-r--r--  flag.txt</div>
+    </div>
+    <div class="container-page relative py-10 sm:py-12">
+      <div class="font-mono text-xs mb-2.5" style="color: rgba(255,238,88,0.8);">$ ls -la ./challenges/</div>
+      <h1 class="text-3xl font-bold tracking-tight">Retos</h1>
+      <p class="text-sm mt-1.5" style="color: rgba(255,255,255,0.55);">Practica sin restricciones de tiempo ni equipo. Cada entorno corre en su propio contenedor.</p>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="container-page py-8">
+    <CompetitionEntryBanner client:load />
+    <TeamEnrollBanner client:load />
+    <ChallengeList all={true} client:load />
+  </div>
+</BaseLayout>
